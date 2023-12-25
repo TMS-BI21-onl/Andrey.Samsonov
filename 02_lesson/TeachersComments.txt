@@ -1,0 +1,11 @@
+Well done!
+
+No negative comments, great job!
+
+
+4.a
+Email Promotion should not INCLUDE (it's not = should not BE EQUAL). 
+
+4.e
+I would prefer second solution, it looks better. But the first one is correct too. Look at you, giving multiple correct solutions already! And we've just only started :)))
+There is nothing about NULLS for Size and Weight in the task, so (Weight IS NOT NULL AND Size IS NOT NULL) condition is not needed. And even if you want to cancel NULL values, the aggregative functions will do it for you.
