@@ -1,0 +1,57 @@
+-- TASK_1
+
+-- a)
+
+SELECT StandardCost,
+CASE
+	WHEN StandardCost = 0 OR StandardCost IS NULL THEN 'Not for sale'
+	WHEN StandardCost > 0 AND StandardCost < 100 THEN '<$100'
+	WHEN StandardCost >= 100 AND StandardCost < 500 THEN '<$500'
+	ELSE '>=$500'
+END PriceRange
+FROM Production.Product
+
+-- b)
+
+SELECT Purchasing.ProductVendor.[ProductID],
+		Purchasing.ProductVendor.[BusinessEntityID],
+		Purchasing.Vendor.[Name] AS Vendor
+FROM Purchasing.ProductVendor
+JOIN Purchasing.Vendor ON Purchasing.ProductVendor.[BusinessEntityID] = Purchasing.Vendor.[BusinessEntityID]
+WHERE StandardPrice > 10
+	AND (Purchasing.Vendor.[Name] LIKE '%X%' OR Name LIKE 'N%')
+	
+-- c)
+
+SELECT DISTINCT Purchasing.Vendor.[Name]
+FROM Purchasing.ProductVendor
+lEFT JOIN Purchasing.Vendor ON Purchasing.ProductVendor.[BusinessEntityID] = Purchasing.Vendor.[BusinessEntityID]
+WHERE OnOrderQty IS NOT NULL
+
+-- TASK_2
+
+--a)
+
+SELECT Production.Product.[Name], Production.ProductModel.[Name] AS Model, Production.Product.[ListPrice]
+FROM Production.ProductModel
+JOIN Production.Product ON Production.ProductModel.[ProductModelID] = Production.Product.[ProductModelID]
+WHERE Production.ProductModel.[Name] LIKE 'LL%'
+
+--b)
+
+SELECT Name
+FROM Sales.Store
+UNION
+SELECT Name
+FROM Purchasing.Vendor
+ORDER BY Name
+
+--c)
+
+SELECT Production.Product.[Name]
+FROM Sales.SpecialOffer
+JOIN Sales.SpecialOfferProduct ON Sales.SpecialOffer.[SpecialOfferID] = Sales.SpecialOfferProduct.[SpecialOfferID]
+JOIN Production.Product ON Sales.SpecialOfferProduct.[ProductID] = Production.Product.[ProductID]
+GROUP BY Production.Product.[Name]
+HAVING COUNT(Sales.SpecialOfferProduct.[SpecialOfferID])>1
+
