@@ -1,0 +1,4 @@
+Well done!
+
+2.c
+It should be "Vendor LEFT JOIN ProductVendor". And also WHERE is incorrect. Let's discuss it in the lesson.
