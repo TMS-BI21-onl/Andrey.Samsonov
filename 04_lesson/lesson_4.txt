@@ -1,0 +1,87 @@
+-------------------Homework 4 ----------------------
+--3) если все строки будут уникальными
+
+--4)
+--a)
+
+SELECT COUNT (UnitMeasureCode)
+FROM Production.UnitMeasure
+WHERE UnitMeasureCode LIKE 'T%'
+
+SELECT COUNT (UnitMeasureCode)
+FROM Production.UnitMeasure
+
+INSERT INTO Production.UnitMeasure (UnitMeasureCode, Name, ModifiedDate)
+VALUES
+	('TT1', 'Test 1', '2020-09-09'),
+	('TT2', 'Test 2', GETDATE());
+
+SELECT COUNT (UnitMeasureCode)
+FROM Production.UnitMeasure
+WHERE UnitMeasureCode LIKE 'T%'
+
+
+--b)
+
+SELECT *
+INTO Production.UnitMeasureTest
+FROM Production.UnitMeasure
+
+
+INSERT INTO Production.UnitMeasureTest (UnitMeasureCode, Name, ModifiedDate)
+SELECT UnitMeasureCode, Name, ModifiedDate FROM Production.UnitMeasure
+WHERE UnitMeasureCode = 'CAN'
+
+SELECT *
+FROM Production.UnitMeasureTest
+ORDER BY UnitMeasureCode
+
+--c)
+
+UPDATE Production.UnitMeasureTest
+SET UnitMeasureCode = 'TTT'
+
+--d)
+
+DELETE Production.UnitMeasureTest
+
+--e)
+
+SELECT SalesOrderID, LineTotal,
+	MAX (LineTotal) OVER (PARTITION BY SalesOrderID) AS 'max',
+	MIN (LineTotal) OVER (PARTITION BY SalesOrderID) AS 'min',
+	AVG (LineTotal) OVER (PARTITION BY SalesOrderID) AS 'avg'
+FROM Sales.SalesOrderDetail
+WHERE SalesOrderID = 43659 OR SalesOrderID = 43669
+
+--f)
+
+-- YearTD
+
+SELECT CONCAT (LEFT (UPPER (LastName), 3), 'login',	ISNULL(TerritoryGroup, '')) AS 'Login',
+		RANK() OVER (ORDER BY SalesYTD DESC) AS Rating_SalesYTD --Rating_SalesLY
+FROM Sales.vSalesPerson
+
+-- LastYear
+
+SELECT CONCAT (LEFT (UPPER (LastName), 3), 'login',	ISNULL(TerritoryGroup, '')) AS 'Login',
+		RANK() OVER (ORDER BY SalesLastYear DESC) AS Rating_SalesLY 
+FROM Sales.vSalesPerson
+
+--g) не судите строго ))) опыта немного от слова вообще )))
+
+SELECT 
+	CASE
+		WHEN DATENAME (WEEKDAY, (DATEADD (DAY, 1, (DATEADD (MONTH, -1, EOMONTH (GETDATE())))))) = 'Saturday'
+		 THEN DATENAME (WEEKDAY, (DATEADD (DAY, 3, (DATEADD (MONTH, -1, EOMONTH (GETDATE()))))))
+		WHEN DATENAME (WEEKDAY, (DATEADD (DAY, 1, (DATEADD (MONTH, -1, EOMONTH (GETDATE())))))) = 'Sunday'
+		 THEN DATENAME (WEEKDAY, (DATEADD (DAY, 2, (DATEADD (MONTH, -1, EOMONTH (GETDATE()))))))
+		ELSE DATENAME (WEEKDAY, (DATEADD (DAY, 1, (DATEADD (MONTH, -1, EOMONTH (GETDATE()))))))
+	END First_Weekday
+
+
+--5)
+-- count (1) = 4
+-- count (name) = 2
+-- count (id) = 4
+-- count (*) = 4
