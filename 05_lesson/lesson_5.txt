@@ -1,0 +1,97 @@
+
+--6
+
+CREATE TABLE Patients (
+	ID int IDENTITY (1,1),
+	FirstName nvarchar (255),
+	LastName nvarchar (255),
+	SSN nvarchar (255),
+	Temp int,
+	CreateDate DATE
+);
+
+
+ALTER TABLE Patients
+ADD Email AS CONCAT (LEFT(UPPER(FirstName),1), LEFT(LOWER(LastName), 3), '@mail.com')
+
+
+--7
+
+INSERT INTO Patients (FirstName, LastName, SSN, Temp, CreateDate)
+VALUES 
+	('Andrey', 'Samsonov', '1aysv', 37.7, '2024-01-02'),
+	('Julia', 'Sojko', '2jaso', 37.5, '2024-01-02'),
+	('Tatjana', 'Konduhovich', '3takh', 37.2, '2024-01-03'),
+	('Svetlana', 'Kernitskaya', '4saka', 38.2, '2024-01-04'),
+	('Elena', 'Dovnar', '5eadr', 38.0, '2024-01-04'),
+	('Andrey', 'Prihodzko', '6aypo', 37.4, '2024-01-05'),
+	('Ekaterina', 'Klimovich', '7eakh', 36.0, '2024-01-05'),
+	('Darya', 'Samsonova', '8dasa', 37.0, '2024-01-05')
+
+--8
+
+AlTER TABLE Patients
+ADD TempType nvarchar (255)
+
+UPDATE Patients
+SET TempType =
+	CASE 
+		WHEN Temp >= 37 THEN N'>37℃'
+		ELSE N'<37℃'
+	END
+
+SELECT *
+FROM Patients
+
+--9
+
+CREATE VIEW vPatients
+AS
+SELECT ID, FirstName, LastName, Temp*1.8+32 AS TempF
+FROM Patients
+GO 
+
+SELECT *
+FROM vPatients
+
+
+--10
+
+CREATE FUNCTION dbo.udfConvertTempCtoTempF (@TempC INT)
+RETURNS INT
+AS
+BEGIN
+	RETURN (@TempC * 1.8 + 32)
+END
+
+SELECT udfConvertTempCtoTempF (Temp)
+FROM Patients
+
+SELECT Temp AS TempC, dbo.udfConvertTempCtoTempF (Temp) AS TempF
+FROM Patients
+
+--11
+
+DECLARE @DateValue DATE
+SET @DateValue = 
+DATEADD (MONTH, -1, EOMONTH ((GETDATE())))
+SELECT
+	CASE
+		WHEN DATENAME (WEEKDAY, (DATEADD (DAY, 1, @DateValue))) = 'Saturday'
+			THEN DATENAME (WEEKDAY, (DATEADD (DAY, 3, @DateValue)))
+		WHEN DATENAME (WEEKDAY, (DATEADD (DAY, 1, @DateValue))) = 'Sunday'
+			THEN DATENAME (WEEKDAY, (DATEADD (DAY, 2, @DateValue)))
+		ELSE DATENAME (WEEKDAY, (DATEADD (DAY, 1, @DateValue)))
+	END
+
+
+-- задача 5 проверочной работы
+
+SELECT first_name,
+	CASE 
+		WHEN END_DATE IS NULL THEN 'Currently Working'
+		ELSE CONCAT ('Left the company at ', JOB_HISTORY.[END_DATE])
+	END Status
+FROM EMPLOYEES
+JOIN JOB_HISTORY ON EMPLOYEES.[EMPLOYEE_ID] = JOB_HISTORY.[EMPLOYEE_ID]
+
