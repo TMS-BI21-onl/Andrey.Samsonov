@@ -1,0 +1,23 @@
+SELECT NationalIDNumber, BusinessEntityID
+FROM HumanResources.Employee
+WHERE BusinessEntityID BETWEEN 10 AND 20
+
+
+USE AdventureWorks2017
+GO
+CREATE PROC Change_Values
+ @BusinessEntityID INT,
+ @NationalIDNumber NVARCHAR(30)
+AS
+	UPDATE HumanResources.Employee
+		SET NationalIDNumber = @NationalIDNumber
+		WHERE BusinessEntityID = @BusinessEntityID
+
+
+EXEC Change_Values @BusinessEntityID = 15, @NationalIDNumber = 87934111
+
+
+
+SELECT NationalIDNumber, BusinessEntityID
+FROM HumanResources.Employee
+WHERE BusinessEntityID BETWEEN 10 AND 20
