@@ -1,0 +1,27 @@
+CREATE TABLE TEST_1m_person (
+	first_name VARCHAR (max),
+	last_name VARCHAR (max), 
+	)
+
+BULK INSERT TEST_1m_person
+FROM 'C:\01_TMS_BI\person_1.csv'
+WITH (FIRSTROW = 2 , FIELDTERMINATOR = ',', ROWTERMINATOR = '0x0a')
+
+SELECT TOP 1000000 t1.last_name as LastName, t2.first_name as FirstName
+FROM TEST_1m_person AS t1
+CROSS JOIN TEST_1m_person As t2
+		
+CREATE TABLE TEST_1m_person_new (
+	ID INT IDENTITY (1,1),
+	first_name VARCHAR (max),
+	last_name VARCHAR (max), 
+	)
+			
+INSERT INTO TEST_1m_person_new (last_name, first_name)
+		SELECT TOP 1000000 t1.last_name, t2.first_name
+		FROM TEST_1m_person AS t1
+		CROSS JOIN TEST_1m_person As t2
+			
+SELECT *
+FROM TEST_1m_person_new
+ORDER BY ID
