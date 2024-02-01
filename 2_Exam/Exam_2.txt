@@ -1,0 +1,21 @@
+
+SELECT FirstName, LastName, PhoneNumber, RIGHT (PhoneNumber, 3) AS CityCode
+FROM Person.Person AS pp
+LEFT JOIN Person.PersonPhone AS ppn ON pp.BusinessEntityID = ppn.BusinessEntityID
+WHERE PhoneNumber LIKE '4%' AND PhoneNumber LIKE '%5'
+
+SELECT CONCAT(FirstName, '', LastName) AS 'FullName', DATEDIFF (YEAR, BirthDate, GETDATE()) AS Age, 
+	CASE
+		WHEN DATEDIFF (YEAR, BirthDate, GETDATE()) BETWEEN 17 AND 20 THEN 'Adolescence'
+		WHEN DATEDIFF (YEAR, BirthDate, GETDATE()) BETWEEN 21 AND 59 THEN 'Adults'
+		ELSE 'Senile'
+	END 'AgeCategory'
+	FROM HumanResources.Employee AS he
+LEFT JOIN Person.Person AS pp ON he.BusinessEntityID = pp.BusinessEntityID
+WHERE DATEDIFF (YEAR, BirthDate, GETDATE()) >= 17 AND DATEDIFF (YEAR, BirthDate, GETDATE()) <= 90
+
+
+--1
+SELECT Color, MAX (ListPrice) AS MaxListPrice
+FROM Production.Product
+GROUP BY Color
