@@ -1,0 +1,6 @@
+
+SELECT CONCAT (p.FirstName, p.LastName) AS FullName,
+	CONCAT (f.FirstName, f.LastName) AS Fathers_FullName
+FROM people AS p
+JOIN Father AS f ON p.id_Father = f.id_Father
+WHERE p.FirstName = 'Dmitriy'
