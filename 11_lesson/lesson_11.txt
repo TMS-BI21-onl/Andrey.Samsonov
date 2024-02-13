@@ -1,0 +1,168 @@
+1. Фильм (id_фильма, название, год выпуска, id_киностудии, id_режиссера, id_актера)
+2. Киностудия (id_киностудии, название, год основания)
+3. Режиссер (id_режиссера, ФИО, номер паспорта, год рождения, пол)
+4. Актеры (id_актера, ФИО, номер паспорта, год рождения, пол)
+5. Билеты(id_билета, id_фильма, id_кинотеатра, дата показа, дата продажи, цена)
+6. Кинотеатр (id_кинотеатра, название, адрес, телефон)
+
+1) Вывести данные о фильмах и кол-ве проданных билетов в зависимости от того, как рано их покупают (за 1,2, ... дней до показа). Результаты вывести в виде транспорнированной таблицы (оси - название фильма, кол-во дней от продажи до показа)
+
+SELECT movie, [1] as '1 day', [2] as '2 days', [3] as '3 days',[4] as '4 days',[5] as '5 days',[6] as '6 days',[7] as '7 days',[8] as '8 days',[9] as '9 days',[10] as '10 days'
+FROM
+(
+	SELECT m.name AS movie,
+		DATEDIFF (day,t.sale_date, t.show_date) AS days_befor,
+		COUNT (t.id_ticket) AS count_ticket
+	FROM movie AS m
+	JOIN ticket AS t ON m.id_movie = t.id_movie
+	GROUP BY m.name, DATEDIFF (day,t.sale_date, t.show_date) 
+) AS tabl1
+PIVOT (
+SUM (count_ticket)
+FOR days_befor in ([1],[2],[3],[4],[5],[6],[7],[8],[9],[10]) 
+) AS PivotTable
+ORDER BY movie
+
+-- я пытался разобраться, как сделать так, чтобы кол.дней от продажи до показа в оси табл. проставлялось не вручную,
+но у меня так и не вышло :(
+есть ли решение данноого вопроса ???
+
+
+
+2) Вывести сведения о фильме с самым большим кассовым сбором за все время. 
+
+SELECT 	TOP 1 WITH TIES SUM (t.price) AS total,
+		m.id_movie,
+		m.name AS movie,
+		d.fullName AS Director,
+		m.release_date AS 'release date'
+FROM movie AS m
+JOIN director AS d ON m.id_director = d.id_director
+JOIN ticket AS t ON m.id_movie = t.id_movie
+GROUP BY m.id_movie, m.name, d.fullName, m.release_date
+ORDER BY total DESC
+
+3) MERGE
+3.Создать таблицу с количеством использования функций, используя data_for_merge.csv, заполнить ее через оператор merge.
+  Итоговая таблица с результатами должна иметь вид //
+
+
+CREATE TABLE table_results (
+	Function_name VARCHAR (255),
+	Function_count INT)
+
+MERGE table_results
+USING 
+	(
+	SELECT Alex AS Function_name, COUNT (Alex) as Function_count
+	FROM data_for_merge
+	WHERE Alex IS NOT NULL
+	GROUP BY Alex
+	) AS table_source
+ON table_results.Function_name = table_source.Function_name
+WHEN MATCHED THEN UPDATE SET table_results.Function_count = table_source.Function_count + table_results.Function_count
+WHEN NOT MATCHED THEN INSERT VALUES (table_source.Function_name, table_source.Function_count)
+;
+MERGE table_results
+USING 
+	(
+	SELECT Carlos AS Function_name, COUNT (Carlos) as Function_count
+	FROM data_for_merge
+	WHERE Carlos IS NOT NULL
+	GROUP BY Carlos
+	) AS table_source
+ON table_results.Function_name = table_source.Function_name
+WHEN MATCHED THEN UPDATE SET table_results.Function_count = table_source.Function_count + table_results.Function_count
+WHEN NOT MATCHED THEN INSERT VALUES (table_source.Function_name, table_source.Function_count)
+;
+MERGE table_results
+USING 
+	(
+	SELECT Charles AS Function_name, COUNT (Charles) as Function_count
+	FROM data_for_merge
+	WHERE Charles IS NOT NULL
+	GROUP BY Charles
+	) AS table_source
+ON table_results.Function_name = table_source.Function_name
+WHEN MATCHED THEN UPDATE SET table_results.Function_count = table_source.Function_count + table_results.Function_count
+WHEN NOT MATCHED THEN INSERT VALUES (table_source.Function_name, table_source.Function_count)
+;
+MERGE table_results
+USING 
+	(
+	SELECT Daniel AS Function_name, COUNT (Daniel) as Function_count
+	FROM data_for_merge
+	WHERE Daniel IS NOT NULL
+	GROUP BY Daniel
+	) AS table_source
+ON table_results.Function_name = table_source.Function_name
+WHEN MATCHED THEN UPDATE SET table_results.Function_count = table_source.Function_count + table_results.Function_count
+WHEN NOT MATCHED THEN INSERT VALUES (table_source.Function_name, table_source.Function_count)
+;
+MERGE table_results
+USING 
+	(
+	SELECT Esteban AS Function_name, COUNT (Esteban) as Function_count
+	FROM data_for_merge
+	WHERE Esteban IS NOT NULL
+	GROUP BY Esteban
+	) AS table_source
+ON table_results.Function_name = table_source.Function_name
+WHEN MATCHED THEN UPDATE SET table_results.Function_count = table_source.Function_count + table_results.Function_count
+WHEN NOT MATCHED THEN INSERT VALUES (table_source.Function_name, table_source.Function_count)
+;
+MERGE table_results
+USING 
+	(
+	SELECT Fred AS Function_name, COUNT (Fred) as Function_count
+	FROM data_for_merge
+	WHERE Fred IS NOT NULL
+	GROUP BY Fred
+	) AS table_source
+ON table_results.Function_name = table_source.Function_name
+WHEN MATCHED THEN UPDATE SET table_results.Function_count = table_source.Function_count + table_results.Function_count
+WHEN NOT MATCHED THEN INSERT VALUES (table_source.Function_name, table_source.Function_count)
+;
+MERGE table_results
+USING 
+	(
+	SELECT George AS Function_name, COUNT (George) as Function_count
+	FROM data_for_merge
+	WHERE George IS NOT NULL
+	GROUP BY George
+	) AS table_source
+ON table_results.Function_name = table_source.Function_name
+WHEN MATCHED THEN UPDATE SET table_results.Function_count = table_source.Function_count + table_results.Function_count
+WHEN NOT MATCHED THEN INSERT VALUES (table_source.Function_name, table_source.Function_count)
+;
+MERGE table_results
+USING 
+	(
+	SELECT Lando AS Function_name, COUNT (Lando) as Function_count
+	FROM data_for_merge
+	WHERE Lando IS NOT NULL
+	GROUP BY Lando
+	) AS table_source
+ON table_results.Function_name = table_source.Function_name
+WHEN MATCHED THEN UPDATE SET table_results.Function_count = table_source.Function_count + table_results.Function_count
+WHEN NOT MATCHED THEN INSERT VALUES (table_source.Function_name, table_source.Function_count)
+;
+MERGE table_results
+USING 
+	(
+	SELECT Lewis AS Function_name, COUNT (Lewis) as Function_count
+	FROM data_for_merge
+	WHERE Lewis IS NOT NULL
+	GROUP BY Lewis
+	) AS table_source
+ON table_results.Function_name = table_source.Function_name
+WHEN MATCHED THEN UPDATE SET table_results.Function_count = table_source.Function_count + table_results.Function_count
+WHEN NOT MATCHED THEN INSERT VALUES (table_source.Function_name, table_source.Function_count)
+;
+
+SELECT *
+FROM table_results
+
+
+
+
