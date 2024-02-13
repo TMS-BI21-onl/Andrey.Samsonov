@@ -1,0 +1,78 @@
+1/
+
+INSERT INTO manufacturer (id, name, country_id)
+VALUES
+(5, 'HP', 4)
+;
+
+
+2/
+SELECT name, 
+	CASE
+		WHEN name = 'ANDREY' THEN age/3
+		ELSE age
+	END new_age
+FROM user
+
+
+3/
+SELECT TOP 1 WITH TIES price, name
+FROM product
+ORDER BY price DESC
+;
+
+SELECT name, price
+FROM product
+WHERE price = 
+	(SELECT MAX(price)
+	 FROM product)
+;
+
+SELECT name, price, rnk
+FROM 
+	(SELECT name, price, RANK() OVER (ORDER BY price DESC) AS rnk
+	 FROM product) T
+WHERE rnk=1
+;
+
+SELECT
+FROM
+	(SELECT name, price, MAX (price) OVER () as max_cost
+	 FROM product) T
+WHERE price = max_cost
+
+
+4.
+SELECT name, phone
+FROM user as u
+JOIN phone as p ON u.id=p.user_id
+WHERE phone LIKE ('+3'%'4') or age >35
+
+5.
+SELECT TOP 5 WITH TIES SUM (price), name
+FROM product AS p
+JOIN order AS o ON p.id=o.product_id
+JOIN user AS u ON o.user_id = u.id
+GROUP BY u.name
+ORDER BY SUM (price) DESC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
