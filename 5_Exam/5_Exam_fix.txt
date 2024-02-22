@@ -1,0 +1,82 @@
+
+--1
+SELECT ProductSubcategoryID, Weight
+FROM (
+SELECT ProductSubcategoryID, Weight , MIN (Weight) AS min_wegtht
+FROM Production.Product
+GROUP BY ProductSubcategoryID, Weight
+) T
+WHERE min_wegtht > 150
+
+-- 2
+
+SELECT TOP 1 WITH TIES Name, StandardCost
+FROM Production.Product
+GROUP BY Name, StandardCost
+ORDER BY StandardCost DESC
+
+SELECT Name, StandardCost
+FROM Production.Product
+WHERE StandardCost = 
+	(
+	SELECT MAX (StandardCost)
+	FROM Production.Product
+	)
+
+SELECT *
+FROM
+(
+SELECT Name, RANK() OVER (ORDER BY StandardCost DESC) AS rnk
+FROM Production.Product
+) T
+WHERE rnk=1
+
+SELECT *
+FROM
+(
+SELECT Name, StandardCost, MAX(StandardCost) OVER () AS max_price
+FROM Production.Product
+) T
+WHERE StandardCost = max_price
+
+-- 3
+
+SELECT FirstName, LastName
+FROM Client
+EXCEPT
+SELECT FirstName, LastName
+FROM Orders O JOIN Client c ON o.ClientID=c.ClientID
+WHERE BETWEEN GETDATE() AND DATEADD (YEAR, -1, GETDATE())
+
+-- 4
+
+SELECT V.name, COUNT (O.OrderID)
+FROM ORDER O JOIN VENDOR V O.VendorID=V.VendorID
+GROUP BY V.name
+WHERE BETWEEN GETDATE() AND DATEADD (YEAR, -5, GETDATE())
+ORDER BY V.name, COUNT (O.OrderID)
+
+-- 5
+
+SELECT category
+FROM Users U JOIN Notifications N ON U.id=N.id
+WHERE email = 'alex@gmail.com' ADN is_read = true
+HAVING COUNT (is_read) > 50
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
