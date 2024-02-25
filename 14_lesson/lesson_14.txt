@@ -1,0 +1,42 @@
+-- 1)
+
+
+CREATE VIEW v_top_50_point
+AS
+	SELECT TOP 50 WITH TIES full_name, SUM (point) AS total_point
+	FROM 
+	(
+		SELECT M.staff_id, CONCAT (S.first_name, ' ', S.last_name) AS full_name, date_appointment,
+			CASE 
+				WHEN COUNT (M.id) >=10 THEN 3
+				WHEN COUNT (M.id) BETWEEN 5 AND 9 THEN 2
+				WHEN COUNT (M.id) <5 THEN 1
+				ELSE 0
+			END AS point
+		FROM dbo.MedicalRecord M JOIN dbo.Staff S ON M.staff_id = S.id
+		GROUP BY M.staff_id, CONCAT (S.first_name, ' ', S.last_name), date_appointment
+	) t
+	GROUP BY full_name
+	ORDER BY total_point DESC
+
+SELECT * FROM v_top_50_point
+
+
+-- 2)
+
+а. 
+убрать заливку, убрать тени, убрать легенду, при таком названии убрал бы подписи по осям,
+изменил шрифт и положение названия, вставил бы подписи значений по столбцам, столбцы бы сделал одним цветом
+
+b. 
+столбцы сделать прямоугольными, убрать тени и заливки
+убрать эффект 3D
+значение по оси Y начинать с "0"
+добавить название
+
+c.
+название сильно перегружено
+подписи колонок сократь для удобного чтения
+поставить значение колонок
+большое расстояние между колонок
+
