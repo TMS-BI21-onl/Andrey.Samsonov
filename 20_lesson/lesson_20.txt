@@ -1,0 +1,54 @@
+--1
+
+SELECT e1.first_name, e1.last_name
+FROM employees e JOIN employees e1 ON e.manager_id=e1.employee_id
+GROUP BY e1.first_name, e1.last_name
+HAVING COUNT(e.employee_id) > 6
+ORDER BY COUNT(e.employee_id) DESC
+
+--2
+
+SELECT d.department_id,
+		d.department_name dep,
+		MAX(e.salary-(e.salary * e.commission_pct / 100)) [max],
+		MIN(e.salary-(e.salary * e.commission_pct / 100)) [min]
+FROM employees e
+JOIN departments d ON e.department_id = d.department_id
+GROUP BY d.department_id, d.department_name
+
+--3
+
+SELECT TOP 1 WITH TIES r.region_name dep
+FROM regions s
+JOIN countries c ON r.region_id = c.region_id
+JOIN location l ON l.country_id=l.country_id
+JOIN derartments d ON l.location_id=d.location_id
+JOIN employees e ON d.department_id=edepartment_id
+GROUP BY r.region_name
+ORDER BY COUNT (e.employee_id) DESC
+
+--4
+
+SELECT d.department_name,
+		ROUND(CAST(AVG (e.salary) AS FLOAT)/CAST((SELECT AVG (salary) FROM employees) AS FLOAT)*100-100, 2) AS dif_pct
+FROM employees e
+JOIN departments d ON e.department_id = d.department_id
+GROUP BY d.department_name
+
+--5
+
+SELECT first_name, last_name
+FROM employees e
+JOIN departments d ON e.department_id=e.department_id
+JOIN job_history j ON d.department_id=j.department_id
+GROUP BY e.department_id
+WHERE DATEDIFF (YEAR, start_date, getdate()) > 10 AND end_date IS NULL
+
+--6
+SELECT first_name, last_name
+FROM 
+(
+SELECT first_name, last_name, rank () OVER (ORDER BY salary DESC) rnk
+FROM employees
+) t
+WHERE rnk BETWEEN 5 AND 10
